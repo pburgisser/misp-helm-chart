@@ -1,0 +1,14 @@
+{{- if .Values.persistentVolume.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "misp.fullname" . }}-frontend
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: {{ .Values.persistentVolume.claim.size}}
+  volumeName: {{ .Values.persistentVolume.claim.existingClaim | default (printf "%s%s" (include "misp.fullname" .) "-frontend") }}
+{{- end}}

@@ -1,0 +1,10 @@
+{{- if .Values.config.gpgKey -}}
+apiVersion: v1
+data:
+  gpg.asc: |
+{{ .Values.config.gpgKey | indent 4 }}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: {{ include "misp.fullname" . }}-config-gpg-frontend
+{{- end }}

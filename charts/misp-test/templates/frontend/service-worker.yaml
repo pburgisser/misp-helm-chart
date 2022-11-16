@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "misp.fullname" . }}-workers
+  labels:
+    {{- include "misp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.workers.service.type }}
+  ports:
+    - port: {{ .Values.workers.service.port }}
+      targetPort: supervisord
+      protocol: TCP
+      name: supervisord
+  selector:
+    {{- include "misp.workers.selectorLabels" . | nindent 4 }}

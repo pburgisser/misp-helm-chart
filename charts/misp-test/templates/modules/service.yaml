@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "misp.fullname" . }}-modules
+  labels:
+    {{- include "misp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.modules.service.type }}
+  ports:
+    - port: {{ .Values.modules.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "misp.modules.selectorLabels" . | nindent 4 }}
