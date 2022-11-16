@@ -34,7 +34,7 @@ kubectl create configmap application-routes --from-file=routes.php=/tmp/routes.p
 ## Installation
 1. Add the repository
 ```shell
-helm repo add misp https://pburgisser.github.io/misp-helm-chart/
+helm repo add misp https://...
 ```
 2. Install the MISP with the default values:
 ```shell
