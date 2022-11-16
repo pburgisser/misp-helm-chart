@@ -1,0 +1,190 @@
+# Default values for misp.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+config:
+  hostname: misp.example.com
+  database:
+    host: localhost
+    user: root
+    password: password
+    db: misp
+  redis:
+    host: localhost
+  gpgKey: ""
+  databaseSecretName: "database"
+  configConfigMapName: "application-config"
+  coreConfigMapName: "application-core"
+  bootstrapConfigMapName: "application-bootstrap"
+  emailConfigMapName: "application-email"
+  routesConfigMapName: "application-routes"
+
+persistentVolume:
+  enabled: false
+  claim:
+# if existingClaim is "", create a PV and use it's name
+    existingClaim: "" 
+    size: 20Gi
+  volumeSpecs: "" 
+      # capacity:
+      #   storage: 20Gi
+      # volumeMode: Filesystem
+      # persistentVolumeReclaimPolicy: Retain
+workers:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/pburgisser/misp-container-worker
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 9001
+  serviceAccount:
+    create: true
+    annotation: {}
+    name: ""
+  imagePullSecrets: []
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/pburgisser/misp-container-frontend
+    tag: latest
+    pullPolicy: Always
+  config:
+    host: misp.example.com
+  service:
+    type: ClusterIP
+    port: 443
+  serviceAccount:
+    create: true
+    annotation: {}
+    name: ""
+  imagePullSecrets: []
+  ssl: #Base64 format
+    key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2UUlCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktjd2dnU2pBZ0VBQW9JQkFRRFA2NEJ4MU1jblVkTzEKaU93WjZwenFCNEdmd0pnWEg2bEE5b09OY1VqSXlIMEFPL3FMTnlvaW9oK2FSejV2eWx5bS9YV3JOWUlsTW41OQprbTNmS2g4MEttY0NaeUZUYmtkMG1IOTlXNmUrRktJcytlOFNoNytCSmtXb1lhMWhlSlBLUDF4UDRlWmxjYm1xCmhHWFUyWkdTY2NEWlEvV0g2eklsbGpBK1NOTWFNdkY3Ry9wZXUyemM3Qk9KVWkzYVhmZTVHYjNnMHhCWHNvWjEKYTYvdHZKaUJ6YTFManFOUmNoWUxWdVZFc0FzY1VEL3dkbGZUOWgvbmNjd0pYdlMyQVJMSXBQYXlJWXBtSk90SAo0blpTYXVNWVgvTlQ4L2dWMkFMZ2VaUko5NmxGRjRFeXA5c2RnSTJSYXVQelBGa3lZYTkvTU5CbDA0OEluQ3R1CnNoNkU4bkF6QWdNQkFBRUNnZ0VBV2gwRGlsSmlEbFNVb1RVNnZ2REVHVm92Z0FHRTZXQzdob0JRKzlpQlp5UWQKcVNCVnNraXlabGhGd2lQbWw2VHBDeWNHL0xFd090YnJvNWozTGFXZjZJZ0lKUzUxYnlkNHFMdi9aV0Y0RGhYNwpRK3IvQnRUMjF3NnpXZ3Niamdjb1pwdVhjcmZCbDIzMnZrU3JyZGl1RXY1aVNzZjlmbThkU05VVEM2dWNjdG1oClh1dG1KQVYzR2V3ZDh5ZzhUV1BaTzBDQ00xWGdhUys2OThIWURLM1kvN1h4em1Ha2lxK1UyYkx2KzM5V0tCUGgKMnM1V0VHajE0VXoydGJtSWpiSUZBQTBxWENQV0xMZFZ5aXp5VGZ1SXg3VEFRaTNYTlVwMGx2MGkxaWx4YmhKSQpEQ1pHM2pWTlcwSmlUNGM4U0NtQmdZT2U2SldNTEpHcXpvdTZFUHVYb1FLQmdRRHVnN1AzYmx5ZXFmL2FrR1psCnpaa0FSQlZnZUd4bVk3OWhQUGF4OS9IbkYwaEtTOEFtamF5c2Z4enhCZ0txS0JEMysyMmJVblpwcis5VUgrcVIKK1NYbHNoY2hxazM2K2ZwT2lXWlZUdS83Mi9ramU0d2tQajM5UG1mY0wrK0o5VTJlTCs1TnRiVWp1ZVkwd3RRNApmVnpPUVBiWm5BQitycUdCRUZCVzNUbVN6d0tCZ1FEZktaNW5QU0NFVEtKa0Jpc09hRVFod05wc2xqaXphQ1JJCktLakRiUnEyTW1ZVW52RWJOUUhOWmZFZGlhSkx6QnFRUUhPZTJOTGx2NEZqQTVid05iWjgyZEwrSno1Smc1OUoKb2Q4ZkU1UVVCTG1EaU5KUGVFUmlJS3BxZEI4TitiTm9ZTjZvY0lSMzdzOUwyY0w2aU1TZkdRd2ptU2F5S3FDVQpPeldLRy9qMVhRS0JnQ3ZXSHVSeDd5bm1HclVENXgzOHpJc0UrRnpUcFRDb1Vvcy9saU9kYTJOS255bXdoRzlSCmlKUG5oTjB6ZXBmbFowRDhmK2VWSDFoTFVwUkdqV2tvdm5OWjZQQnlDWVVBSHFZQ2tNRkxFY1piWm8zRDdqelgKQjdPY25hQVZXMVFpdHBKRlF1b2JaR0Jka1ZiUEhBd0oxbDIrQ09CejBJOTM3d3oyZjUySGFVWjNBb0dBRUE0agplbFA0Z2V3dGhycTI0RXQ2RTErWGwxWmJiL1RmSDEzbGZtSGNHUjJaSUlTcTNnVTdRdmJCbVJsczFyMHhjQTFqCkJCdWZXSzRsZGVVdE44ejFleGdFeVFvenZnQTlOb1B4MUgrSkdNT2FRUzlYeWlYaDdabGlDVlNmWTFjQ3BGREwKMUJ4OE8xQ3dFMG53Y0N2azBYbHcyU0xNbU9iZU5LdnAxeXphQlhVQ2dZRUF1ZFNaNU1CdzV4bnN4a29Ra25lZgpkOFRqVWFnSXFWK1FqMVlHaFM5SFgrVFR3SDc3T3pGb0FDVmlVOURiNC9SR29CY25hYVFDanFoZlE1OWk1amVpClF1R1F4RmN3Tm5lT2FYL3Q0VWxMd0FoZWRnOUNpem95RFpxa2Q5N0JIdDM4eG1rdnlDNlN0dkNyc0xYd1I2a2cKWjZJc1hlT0FVOFp0TlFJd1BHNGJmOWs9Ci0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+    cert: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURpVENDQW5HZ0F3SUJBZ0lVTkhzUnI2d2t4cVBiVllLZDM3VmJ3Q3gzcmRzd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1ZERUxNQWtHQTFVRUJoTUNRMEV4Q3pBSkJnTlZCQWdNQWxGRE1Rc3dDUVlEVlFRSERBSlJRekVOTUFzRwpBMVVFQ2d3RVRVbFRVREVOTUFzR0ExVUVDd3dFVFVsVFVERU5NQXNHQTFVRUF3d0ViV2x6Y0RBZUZ3MHlNakV4Ck1UWXdNVE16TUROYUZ3MHlNekV4TVRZd01UTXpNRE5hTUZReEN6QUpCZ05WQkFZVEFrTkJNUXN3Q1FZRFZRUUkKREFKUlF6RUxNQWtHQTFVRUJ3d0NVVU14RFRBTEJnTlZCQW9NQkUxSlUxQXhEVEFMQmdOVkJBc01CRTFKVTFBeApEVEFMQmdOVkJBTU1CRzFwYzNBd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURQCjY0QngxTWNuVWRPMWlPd1o2cHpxQjRHZndKZ1hINmxBOW9PTmNVakl5SDBBTy9xTE55b2lvaCthUno1dnlseW0KL1hXck5ZSWxNbjU5a20zZktoODBLbWNDWnlGVGJrZDBtSDk5VzZlK0ZLSXMrZThTaDcrQkprV29ZYTFoZUpQSwpQMXhQNGVabGNibXFoR1hVMlpHU2NjRFpRL1dINnpJbGxqQStTTk1hTXZGN0cvcGV1MnpjN0JPSlVpM2FYZmU1CkdiM2cweEJYc29aMWE2L3R2SmlCemExTGpxTlJjaFlMVnVWRXNBc2NVRC93ZGxmVDloL25jY3dKWHZTMkFSTEkKcFBheUlZcG1KT3RING5aU2F1TVlYL05UOC9nVjJBTGdlWlJKOTZsRkY0RXlwOXNkZ0kyUmF1UHpQRmt5WWE5LwpNTkJsMDQ4SW5DdHVzaDZFOG5BekFnTUJBQUdqVXpCUk1CMEdBMVVkRGdRV0JCVENsNWV3eDc5Z3NSMTJsdUcxCjZuK09sa2tUMFRBZkJnTlZIU01FR0RBV2dCVENsNWV3eDc5Z3NSMTJsdUcxNm4rT2xra1QwVEFQQmdOVkhSTUIKQWY4RUJUQURBUUgvTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFCQ3I2YTg3aUFyNmM3YS9QSFpibmxMSjNMNwpIYm45YlR6c2M5OFQxemhrZFlFY1ZmMHpQWGJmUUt5cnVsa1J1dDZIZjloVmM5eVlNdVhUSjVWWW80TjNkWGV5Cnlva09nMGJ0d3RPb1U0WUdIa0VXa0o0YllhN2xxY1JvYUVQSHdaa29NOTJXTExrNlN5bU5ISFlta3ZDcUF3SkIKazdZZlF1dFI2STZMZ1FpNUFQTEU2eVNuaENSSWRhcWlsYlR3aFdqVjlWcm1oUEVhMU4ydzREWTJydGdtM2VkZgo1ZmlVZ3N5S1FPSkpNUFNtNXpQNmJNYzhkbUVMU2owQjVSYUVmaVQvY0VSYThJYjh5bzZJbWlZdjVFUFowU2dzClNmNVhqWExoSXgrd2FJSW1mWG9uNGZFQlhKUitFdS9LbUZjSGthNkFDenowUUpKU2I5eCs3RDNwMkxTbAotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    dhparams: ""
+    secretName: "" # Provide existing secret, if set it doesn't create the certificate with the values from above
+    
+
+
+modules:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/pburgisser/misp-container-module
+    tag: latest
+    pullPolicy: IfNotPresent
+  config:
+    redis_host: redis.example.com
+  service:
+    type: ClusterIP
+    port: 6666
+  serviceAccount:
+    create: true
+    annotation: {}
+    name: ""
+  imagePullSecrets: []
+
+cronJobs:
+  jobs:
+    cache-feeds:
+      schedule: "20 2 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Server', 'cacheFeed', '2', 'all']
+    fetch-feeds:
+      schedule: "30 2 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Server', 'fetchFeed', '2', 'all']
+    update-galaxy:
+      schedule: "00 3 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Admin', 'updateGalaxies']
+    update-taxonomies:
+      schedule: "10 3 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Admin', 'updateTaxonomies']
+    update-warninglists:
+      schedule: "20 3 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Admin', 'updateWarningLists']
+    update-noticelists:
+      schedule: "30 3 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Admin', 'updateNoticeLists']
+    update-objecttemplates:
+      schedule: "30 3 * * *"
+      commands: |
+        ['sudo', '-u', 'www-data', '/var/www/MISP/app/Console/cake', 'Admin', 'updateObjectTemplates', '2']
+  serviceAccount:
+    create: true
+    annotation: {}
+    name: ""
+  image:
+    repository: ghcr.io/pburgisser/misp-container-workers
+    tag: latest
+    pullPolicy: IfNotPresent
+  imagePullSecrets: []
+
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 443
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

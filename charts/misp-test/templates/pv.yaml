@@ -1,0 +1,11 @@
+{{- if and .Values.persistentVolume.enabled .Values.persistentVolume.volumeSpecs -}}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "misp.fullname" . }}-frontend
+  labels:
+    {{- include "misp.labels" . | nindent 4 }}
+spec:
+{{ .Values.persistentVolume.volumeSpecs | indent 2 }}
+{{- end}}

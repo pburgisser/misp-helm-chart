@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "misp.fullname" . }}-workers
+  labels:
+    {{- include "misp.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "misp.workers.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "misp.workers.selectorLabels" . | nindent 8 }}
+
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "misp.workers.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.workers.image.repository }}:{{ .Values.workers.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.workers.image.pullPolicy }}
+          ports:
+            - name: supervisord
+              containerPort: 9001
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: bootstrap-config
+              mountPath: /var/www/MISP/app/Config/bootstrap.php
+              subPath: bootstrap.php
+            - name: core-config
+              mountPath: /var/www/MISP/app/Config/core.php
+              subPath: core.php
+            - name: application-config
+              mountPath: /var/www/MISP/app/Config/config.php
+              subPath: config.php
+            - name: database-config
+              mountPath: /var/www/MISP/app/Config/database.php
+              subPath: database.php
+            - name: email-config
+              mountPath: /var/www/MISP/app/Config/email.php
+              subPath: email.php
+            - name: routes-config
+              mountPath: /var/www/MISP/app/Config/routes.php
+              subPath: routes.php              
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: database-config
+        secret:
+          secretName: {{ .Values.config.databaseSecretName }}
+      - name: application-config
+        configMap:
+          name: {{ .Values.config.configConfigMapName }}
+      - name: core-config
+        configMap:
+          name: {{ .Values.config.coreConfigMapName }}
+      - name: bootstrap-config
+        configMap:
+          name: {{ .Values.config.bootstrapConfigMapName }}
+      - name: email-config
+        configMap:
+          name: {{ .Values.config.emailConfigMapName }}
+      - name: routes-config
+        configMap:
+          name: {{ .Values.config.routesConfigMapName }}
