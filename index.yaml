@@ -3,6 +3,16 @@ entries:
   misp:
   - apiVersion: v2
     appVersion: v2.4.162
+    created: "2022-11-28T19:44:10.157852256Z"
+    description: A Helm chart to deploy MISP application
+    digest: 2ec55092a356d4baabc54ce1bc4f687d1b5c66ca66282236db3c870a7dd2aef4
+    name: misp
+    type: application
+    urls:
+    - https://github.com/pburgisser/misp-helm-chart/releases/download/misp-0.1.1/misp-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: v2.4.162
     created: "2022-11-16T14:02:03.866347473Z"
     description: A Helm chart to deploy MISP application
     digest: ca4257d43a00f32131c885dfdb04c4b95ab17c3cd9dc628212e91b1bcd592d94
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/pburgisser/misp-helm-chart/releases/download/misp-0.1.0/misp-0.1.0.tgz
     version: 0.1.0
-generated: "2022-11-16T14:02:03.866362573Z"
+generated: "2022-11-28T19:44:10.157858756Z"
