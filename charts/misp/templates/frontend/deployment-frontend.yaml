@@ -128,7 +128,7 @@ spec:
       - name: routes-config
         configMap:
           name: {{ .Values.config.routesConfigMapName }}
-{{- if .Values.persistentVolume.enabled -}}
+{{- if .Values.persistentVolume.enabled }}
       - name: persistent-storage-misp
         persistentVolumeClaim:
           claimName: {{ include "misp.fullname" . }}-frontend
